@@ -1,0 +1,55 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<script>
+    function downPlease() {
+        setTimeout(function () {
+            window.scrollTo(0, document.body.scrollHeight);
+        }, 250);
+    }
+</script>
+    <center>
+        <br /><br />
+        <div class="jumbotron" style="width: 800px; text-align: left;">
+            <h1 class="display-3">Tell us everything!</h1>
+            <p class="lead">
+                Warm welcome to you, internet wanderer. If you're here, it means you have something on your mind...
+            </p>
+            <p>
+                You're in the right place. Whether you only need to vent, or you want genuine advice, completely anonymously, we have your back
+            </p>
+            <center class="lead">
+                <button type="button" class="btn btn-outline-success" data-toggle="collapse" data-target="#more-info-collapse" onclick="downPlease()">More Info</button>
+                <a asp-area="" asp-page="/SpillTheTea/Advice" ><button type="button" class="btn btn-outline-info">Advice Section</button></a>
+                <a asp-area="" asp-page="/SpillTheTea/Confessions"><button type="button" class="btn btn-outline-danger">Confession Section</button></a>
+            </center>
+        </div>
+
+        <div class="collapse" id="more-info-collapse">
+                <div class="list-group" style="width: 500px; text-align: left;">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start active" asp-area="" asp-page="/SpillTheTea/Confessions">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Confessions</h5>
+                        </div>
+                        <p class="mb-1">
+                            When you just want to vent, spill out your heart and never look back, the Confessions section is for you!
+                        </p>
+                    </a>
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" asp-area="" asp-page="/SpillTheTea/Advice">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Advice</h5>
+                        </div>
+                        <p class="mb-1">
+                            Something happened and you want to know what you should do?<br />
+                            We will answer with advice!
+                        </p>
+                    </a>
+                </div>
+        </div>
+</center>
+@{ 
+    RedirectToPage("/SpillTheTea/ViewPost", new { id = 3 });
+}
+

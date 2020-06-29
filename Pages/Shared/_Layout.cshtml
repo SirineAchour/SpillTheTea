@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Spill The Tea</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/scss/bootstrap.scss" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .click-stuff {
+            cursor: pointer;
+        }
+        p.text-primary {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<script>
+    function search_content(e) {
+        e.preventDefault();
+        var content = document.getElementsByClassName("contentt")[0].value;
+        console.log(content);
+        $.ajax({
+            type: 'GET',
+            url: '?handler=SearchContent',
+            data: {
+                "search": content,
+            },
+            success: function (data) {
+                document.getElementsByTagName("body")[0].innerHTML = "";
+                document.write(data);
+            },
+            error: function (error) {
+                alert("Error : " + error.statusText);
+            }
+        });
+        return false;
+    }
+</script>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin: 2px;">
+            <img src="~/img/teabag.png"></img>
+            &nbsp;&nbsp;&nbsp;
+            <a class="navbar-brand" asp-area="" asp-page="/Index">Spill The Tea</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor03">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-area="" asp-page="/Index">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/SpillTheTea/Advice">Advice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/SpillTheTea/Confessions">Confessions</a>
+                    </li>
+                </ul>
+                <form method="post" class="form-inline my-2 my-lg-0" onsubmit="return search_content(event)">
+                    <input class="form-control mr-sm-2 contentt" type="text" placeholder="Search Content">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+            <br />
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!--<footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - UnamedWebsite - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>-->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

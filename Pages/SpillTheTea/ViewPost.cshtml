@@ -1,0 +1,151 @@
+﻿@page
+
+@model UnamedWebsite.Pages.ViewPostModel
+@{
+    ViewData["Title"] = "ViewPost";
+}
+<script>
+    var type = window.location.href.split("&")[0].split("=")[1];
+    var post_id = window.location.href.split("&")[1].split("=")[1];
+    function comment(e) {
+        e.preventDefault();
+        var c = document.getElementById("comment-on-post").value;
+        $.ajax({
+            type: 'GET',
+            url: '?handler=Comment',
+            data: {
+                "Content": c,
+                "PostId": post_id
+            },
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (error) {
+                window.location.reload();
+            }
+        });
+        return false
+    }
+
+    function like() {
+        console.log(window.location.href.split("&")[1].split("=")[1])
+
+        $.ajax({
+            type: 'GET',
+            url: '?handler=Like',
+            data: {
+                "Id": post_id,
+                "Content": type
+            },
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (error) {
+                window.location.reload();
+            }
+        });
+        return false
+    }
+
+    function like_comment(id) {
+        console.log(window.location.href.split("&")[1].split("=")[1])
+        $.ajax({
+            type: 'GET',
+            url: '?handler=LikeComment',
+            data: {
+                "Content": type,
+                "PostId": post_id,
+                "Id": id
+            },
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (error) {
+                window.location.reload();
+            }
+        });
+    }
+
+</script>
+<br />
+<br />
+<center>
+    <span class="card border-primary mb-3" style="max-width: 80%;">
+        <span class="card-body" style="text-align:left;">
+            <p class="text-primary">
+                @Model.Post.Content
+            </p>
+            <p class="text-warning">
+                @foreach (var t in Model.Post.Tags.Split("#"))
+                {
+                    @if (t != "")
+                    {
+                        <span>
+                            #@t&nbsp;
+                        </span>
+                    }
+                }
+            </p>
+
+        </span>
+        <div class="card-footer">
+            <div style="float:left;">
+                <div class="badge badge-pill badge-danger click-stuff" onclick="like()"> Like</div>
+                <div class="badge badge-pill badge-success click-stuff" data-toggle="collapse" data-target="#comment-collapse">Comment</div>
+            </div>
+            <div style="float: right;">
+                <div class="badge badge-pill"> @Model.Post.Hearts Likes</div>
+            </div>
+        </div>
+    </span>
+    <br />
+    <div id="comment-collapse" class="collapse">
+        <ul class="list-group" style="max-width:35%;">
+            <form class="form-inline my-2 my-lg-0" method="post" onsubmit="return comment(event)">
+                <li class="list-group-item d-flex justify-content-between align-items-center active" style="text-align:left;">
+
+
+                    <textarea class="form-control" id="comment-on-post" rows="1" placeholder="Comment.." required
+                              oninput='this.style.height = ""; this.style.height = this.scrollHeight + "px"'></textarea>
+                    &nbsp;&nbsp;
+                    <button class="badge badge-primary badge-pill" type="submit" style="margin-right:0px;">Comment</button>
+
+                </li>
+            </form>
+        </ul>
+    </div>
+    <br />
+@if (@Model.Post.MainReply!= "")
+{
+    <div style="display: none;" id="reply">
+        <ul class="list-group" style="max-width:60%;">
+
+                <li class="list-group-item d-flex justify-content-between align-items-center" style="text-align:left;">
+                    <p class="text-primary" style="text-align:left;">
+                        @Model.Post.MainReply
+                    </p>    
+                </li>
+        </ul>
+        <br />
+    </div>
+}
+    <ul class="list-group" style="max-width:60%;">
+
+        @foreach (var comment in Model.Comments)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="text-align:left;">
+                @comment.Content
+                <span>
+                    <span class="badge badge-primary badge-pill click-stuff" onclick="like_comment(@comment.Id)">Like</span>
+                    <span class="badge badge-pill">@comment.Hearts Likes</span>
+                </span>
+            </li>
+        }
+    </ul>
+    <script>
+        console.log(type)
+        if (type == "advice") {
+            document.getElementById("reply").style.display = "inline";
+        }
+    </script>
+</center>

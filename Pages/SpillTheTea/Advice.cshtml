@@ -1,0 +1,102 @@
+﻿@page
+@model UnamedWebsite.Pages.AdviceModel
+@{
+    ViewData["Title"] = "Advice";
+    string[] tags_colors = new string[] { "warning", "info", "danger", "success" };
+    var i = 0;
+}
+
+    <script>
+    function viewpost(v) {
+        window.location.href = "https://localhost:44310/SpillTheTea/ViewPost?type=advice&id=" + v;
+    }
+    function search_tag(t) {
+       $.ajax({
+            type: 'GET',
+            url: '?handler=Search',
+            data: {
+                "search": "#"+t.trim(),
+            },
+            success: function (data) {
+                document.getElementsByTagName("body")[0].innerHTML = "";
+                document.write(data);
+            },
+            error: function (error) {
+                alert("Error : " + error.statusText);
+            }
+        });
+    }
+    function search_tags(e) {
+        e.preventDefault();
+        var tags = document.getElementsByClassName("tagss")[0].value.trim();
+        if (tags[0] != "#") {
+            console.log("hh");
+            tags = "#" + tags
+        }
+        console.log(tags);
+        $.ajax({
+            type: 'GET',
+            url: '?handler=Search',
+            data: {
+                "search": tags,
+            },
+            success: function (data) {
+                document.getElementsByTagName("body")[0].innerHTML = "";
+                document.write(data);
+            },
+            error: function (error) {
+                alert("Error : " + error.statusText);
+            }
+        });
+        return false;
+    }
+    </script>
+<br />
+<div>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin: 2px;">
+            <a class="navbar-brand" asp-area="" asp-page="/SpillTheTea/Advice">Advice Section</a>
+            <div class="collapse navbar-collapse" id="navbarColor03">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/SpillTheTea/AskForAdvice"> Ask For Advice</a>
+                    </li>
+                </ul>
+                <form method="post" class="form-inline my-2 my-lg-0" onsubmit="return search_tags(event)">
+                    <input class="form-control mr-sm-2 tagss" type="text" placeholder="Search Tags">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+            <br />
+        </nav>
+    </header>
+    <br />
+    <div class="container">
+        <div class="card-columns">
+            @foreach (var a in Model.advice)
+            {
+                <div class="card border-primary mb-3" style="max-width: 20rem;" >
+                    <div class="card-body">
+                        <p class="text-primary click-stuff" onclick="viewpost(@a.Id)">
+                            @a.Content
+                        </p>
+
+                        <p class="text-@tags_colors[i]">
+                            @{ i = (i + 1) % 4;}
+                            @foreach (var t in a.Tags.Split("#"))
+                            {
+                                @if (t != "")
+                                {
+                                    <span onclick='search_tag("@t")' class="click-stuff">
+                                        #@t&nbsp;
+                                    </span>
+                                }
+                            }
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

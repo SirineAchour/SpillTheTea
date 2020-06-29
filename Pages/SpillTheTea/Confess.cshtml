@@ -1,0 +1,62 @@
+﻿@page
+@model UnamedWebsite.Pages.ConfessModel
+@{
+    ViewData["Title"] = "Confess";
+}
+<script>
+    function confess(e) {
+        e.preventDefault();
+        var confession = document.getElementById("confession").value;
+        var email = document.getElementById("emaill").value;
+        var tags = document.getElementById("tags").value.trim();
+
+        if (tags[tags.length] != "#") {
+            tags = tags+ "#";
+        }
+        $.ajax({
+            type: 'GET',
+            url: '?handler=Confess',
+            data: {
+                "Content": confession,
+                "Email": email,
+                "Tags": tags
+            },
+            success: function (data) {
+                //go to confessions
+                window.location.href = "https://localhost:44310/SpillTheTea/Confessions"
+            },
+            error: function (error) {
+                alert("Error : " + error.statusText);
+            }
+        });
+        return false;
+    }
+</script>
+<h1>Confess</h1>
+
+<form method="post" onsubmit="return confess(event)">
+    <fieldset>
+
+        <div class="form-group">
+            <label for="confession">Confession</label>
+            <textarea class="form-control" id="confession" rows="5" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="tags">Tags</label>
+            <textarea class="form-control" id="tags" rows="1" placeholder="#tag1#tag2..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="emaill">Email address</label>
+            <input type="email" class="form-control" id="emaill" aria-describedby="emailHelp"
+                   placeholder="Enter email to get notified of comments/likes on your confession (optional)">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+
+        <div style="text-align:right;">
+            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="reset" class="btn btn-danger">Reset</button>
+        </div>
+    </fieldset>
+</form>
