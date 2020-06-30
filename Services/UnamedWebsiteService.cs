@@ -24,11 +24,11 @@ namespace UnamedWebsite.Controllers
                 List<MySqlCommand> cmds = new List<MySqlCommand>();
 
                 cmds.Add(new MySqlCommand(
-                    "CREATE TABLE IF NOT EXISTS posts( Id INT(6) UNSIGNED AUTO_INCREMENT, Content VARCHAR(2000) NOT NULL, Email VARCHAR(50), Tags VARCHAR(100),  Hearts INT(6) DEFAULT 0, Reply VARCHAR(2000) DEFAULT NULL, PRIMARY KEY(Id))",
+                    "CREATE TABLE IF NOT EXISTS posts( Id INT(6) UNSIGNED AUTO_INCREMENT, Content VARCHAR(2000) NOT NULL, Email VARCHAR(50), Tags VARCHAR(100),  Hearts INT(6) DEFAULT 0, Reply VARCHAR(2000) DEFAULT NULL, creation_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(Id))",
                     conn
                     ));
                 cmds.Add(new MySqlCommand(
-                    "CREATE TABLE IF NOT EXISTS comments ( Id INT(6) UNSIGNED AUTO_INCREMENT, PostId INT(6) UNSIGNED, Content VARCHAR(1000) NOT NULL, Hearts INT(4) DEFAULT 0, FOREIGN KEY (PostId) REFERENCES posts(Id), PRIMARY KEY(Id,PostId))",
+                    "CREATE TABLE IF NOT EXISTS comments ( Id INT(6) UNSIGNED AUTO_INCREMENT, PostId INT(6) UNSIGNED, Content VARCHAR(1000) NOT NULL, Hearts INT(4) DEFAULT 0, creation_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (PostId) REFERENCES posts(Id), PRIMARY KEY(Id,PostId))",
                     conn
                     ));
                 /*cmds.Add(new MySqlCommand(
@@ -55,7 +55,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("select * from posts where posts.Reply is null", conn);
+                    MySqlCommand cmd = new MySqlCommand("select * from posts where posts.Reply is null order by creation_time desc", conn);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -67,7 +67,7 @@ namespace UnamedWebsite.Controllers
                                 Email = reader["Email"].ToString(),
                                 Hearts = Convert.ToInt32(reader["Hearts"]),
                                 Tags = reader["Tags"].ToString(),
-                                //PublishDate = reader["PublishDate"].ToString()
+                                CreationTime = reader["creation_time"].ToString()
                             });
                         }
                     }
@@ -85,7 +85,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("select * from posts where posts.Reply is not null", conn);
+                    MySqlCommand cmd = new MySqlCommand("select * from posts where posts.Reply is not null order by creation_time desc", conn);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -97,8 +97,8 @@ namespace UnamedWebsite.Controllers
                                 Email = reader["Email"].ToString(),
                                 Hearts = Convert.ToInt32(reader["Hearts"]),
                                 Tags = reader["Tags"].ToString(),
-                                MainReply = reader["Reply"].ToString(),
-                                // PublishDate = reader["PublishDate"].ToString()
+                                CreationTime = reader["creation_time"].ToString(),
+                                MainReply = reader["Reply"].ToString()
                             });
                         }
                     }
@@ -115,7 +115,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("INSERT INTO posts VALUES (null,'"+post.Content+"','"+post.Email+"','"+post.Tags+"',0,'')", conn);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO posts VALUES (null,'"+post.Content+"','"+post.Email+"','"+post.Tags+"',0,'',null)", conn);
                     using (var reader = cmd.ExecuteReader()) ;
                 }
             });
@@ -130,7 +130,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("INSERT INTO posts VALUES (null,'" + post.Content + "','" + post.Email + "','" + post.Tags + "',0,null)", conn);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO posts VALUES (null,'" + post.Content + "','" + post.Email + "','" + post.Tags + "',0,null,null)", conn);
                     using (var reader = cmd.ExecuteReader()) ;
                 }
             });
@@ -157,7 +157,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("INSERT INTO comments VALUES (null,"+comment.PostId+",'"+comment.Content+"',0)", conn);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO comments VALUES (null,"+comment.PostId+",'"+comment.Content+ "',0,null)", conn);
                     using (var reader = cmd.ExecuteReader());
                 }
             });
@@ -227,7 +227,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("select * from posts where " + queryish, conn);
+                    MySqlCommand cmd = new MySqlCommand("select * from posts where " + queryish + " order by creation_time desc", conn);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -239,7 +239,7 @@ namespace UnamedWebsite.Controllers
                                 Email = reader["Email"].ToString(),
                                 Hearts = Convert.ToInt32(reader["Hearts"]),
                                 Tags = reader["Tags"].ToString(),
-                                //PublishDate = reader["PublishDate"].ToString()
+                                CreationTime = reader["creation_time"].ToString()
                             });
                         }
                     }
@@ -273,7 +273,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("select * from posts where " + queryish, conn);
+                    MySqlCommand cmd = new MySqlCommand("select * from posts where " + queryish + " order by creation_time desc", conn);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -285,7 +285,7 @@ namespace UnamedWebsite.Controllers
                                 Email = reader["Email"].ToString(),
                                 Hearts = Convert.ToInt32(reader["Hearts"]),
                                 Tags = reader["Tags"].ToString(),
-                                //PublishDate = reader["PublishDate"].ToString()
+                                CreationTime = reader["creation_time"].ToString()
                             });
                         }
                     }
@@ -312,7 +312,7 @@ namespace UnamedWebsite.Controllers
                             confession.Email = reader["Email"].ToString();
                             confession.Hearts = Convert.ToInt32(reader["Hearts"]);
                             confession.Tags = reader["Tags"].ToString();
-                                //PublishDate = reader["PublishDate"].ToString()
+                            confession.CreationTime = reader["creation_time"].ToString();
                         }
                     }
                 }
@@ -339,7 +339,7 @@ namespace UnamedWebsite.Controllers
                             a.Hearts = Convert.ToInt32(reader["Hearts"]);
                             a.Tags = reader["Tags"].ToString();
                             a.MainReply = reader["Reply"].ToString();
-                            //PublishDate = reader["PublishDate"].ToString()
+                            a.CreationTime = reader["creation_time"].ToString();
                         }
                     }
                 }
@@ -355,7 +355,7 @@ namespace UnamedWebsite.Controllers
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("SELECT * FROM comments WHERE comments.PostId = "+post_id.Trim(), conn);
+                    MySqlCommand cmd = new MySqlCommand("SELECT * FROM comments WHERE comments.PostId = "+post_id.Trim() + " order by creation_time desc", conn);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())

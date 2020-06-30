@@ -14,6 +14,7 @@ namespace UnamedWebsite.Models
         public string Tags { get; set; }
         public string Email { get; set; }
         public int Hearts { get; set; }
+        public string CreationTime { get; set; }
         public Confession()
         {
             this.Tags = "";
