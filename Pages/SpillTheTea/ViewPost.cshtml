@@ -18,10 +18,10 @@
                 "PostId": post_id
             },
             success: function (data) {
-                window.location.reload();
+                $("body").load(window.location.href);
             },
             error: function (error) {
-                window.location.reload();
+                $("body").load(window.location.href);
             }
         });
         return false
@@ -38,10 +38,10 @@
                 "Content": type
             },
             success: function (data) {
-                window.location.reload();
+                $("body").load(window.location.href);
             },
             error: function (error) {
-                window.location.reload();
+                $("body").load(window.location.href);
             }
         });
         return false
@@ -58,10 +58,10 @@
                 "Id": id
             },
             success: function (data) {
-                window.location.reload();
+                $("body").load(window.location.href);
             },
             error: function (error) {
-                window.location.reload();
+                alert("error");
             }
         });
     }
@@ -70,12 +70,13 @@
 <br />
 <br />
 <center>
+    <!-- l actual post -->
     <span class="card border-primary mb-3" style="max-width: 80%;">
         <span class="card-body" style="text-align:left;">
             <p class="text-primary">
                 @Model.Post.Content
             </p>
-            <p class="text-warning">
+            <p class="text-info">
                 @foreach (var t in Model.Post.Tags.Split("#"))
                 {
                     @if (t != "")
@@ -99,6 +100,7 @@
         </div>
     </span>
     <br />
+    <!-- new comment -->
     <div id="comment-collapse" class="collapse">
         <ul class="list-group" style="max-width:35%;">
             <form class="form-inline my-2 my-lg-0" method="post" onsubmit="return comment(event)">
@@ -115,22 +117,30 @@
         </ul>
     </div>
     <br />
-@if (@Model.Post.MainReply!= "")
-{
+    <!-- reply ken advice -->
     <div style="display: none;" id="reply">
         <ul class="list-group" style="max-width:60%;">
 
-                <li class="list-group-item d-flex justify-content-between align-items-center" style="text-align:left;">
-                    <p class="text-primary" style="text-align:left;">
-                        @Model.Post.MainReply
-                    </p>    
-                </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="text-align:left;">
+                <p class="text-primary" style="text-align:left;">
+                    @if (@Model.Post.MainReply == "")
+                    {
+                        Model.Post.MainReply = "No Reply Yet";
+                    }
+                    @Model.Post.MainReply
+                </p>
+            </li>
         </ul>
         <br />
     </div>
-}
+    <!-- comments -->
     <ul class="list-group" style="max-width:60%;">
-
+        @if (Model.Comments.Count() == 0)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="text-align:left;">
+                Be the first to comment :)
+            </li>
+        }
         @foreach (var comment in Model.Comments)
         {
             <li class="list-group-item d-flex justify-content-between align-items-center" style="text-align:left;">
